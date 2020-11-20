@@ -12,10 +12,7 @@ async def on_ready():
 
 @client.command(pass_context=True)
 async def com(ctx, arg : str=None):
-    if arg is None:
-        print("empty argument")
-    elif arg == "hi":
-        await ctx.send("Hi!")
+    await ctx.send("Hi!")
 
 
 @client.command()
