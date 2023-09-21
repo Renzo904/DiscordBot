@@ -1,18 +1,31 @@
 import discord
 import os
-
+from flask import Flask
 from discord.ext import commands
 from discord.ext import tasks
 from activity import bot_activity
-import re, logging
+import re, logging, multiprocessing
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = "!", intents = intents, description = "Bot made it by Renzo")
+webapp = Flask(__name__)
+
+
+@webapp.route('/')
+def index():
+    return 'Bot Discord'
 
 
 bot.logger = logging.getLogger("discord.bot")
 bot.logger.setLevel(logging.DEBUG)
+
+
+def run_web_server():
+    webapp.run(port=8080)
+
+
 
 @bot.event
 async def on_ready():
@@ -38,5 +51,12 @@ async def on_command_error(ctx, error):
     raise error
 
 
-bot.run(TOKEN)
 
+if __name__ == "__main__":
+    web_server_thread = multiprocessing.Process(target=run_web_server, args=())
+    
+    try:
+        web_server_thread.start()
+        bot.run(TOKEN)
+    except KeyboardInterrupt:
+        web_server_thread.terminate()
