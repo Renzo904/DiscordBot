@@ -1,18 +1,24 @@
 import discord
 import os
+
 from discord.ext import commands
 from discord.ext import tasks
 from activity import bot_activity
-import re
+import re, logging
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = "!", intents = intents, description = "Bot made it by Renzo")
 
 
+bot.logger = logging.getLogger("discord.bot")
+bot.logger.setLevel(logging.DEBUG)
+
 @bot.event
 async def on_ready():
-    print("Bot started")
+    await bot.add_cog(bot_activity(bot))
+
+    bot.logger.info("Bot Started!")
 
 @bot.event
 async def on_member_join(member):
@@ -31,6 +37,6 @@ async def on_command_error(ctx, error):
         return await ctx.send(f"`Comando desconocido\nUse {bot.command_prefix}help para ver los comandos`")
     raise error
 
-bot.add_cog(bot_activity(bot))
+
 bot.run(TOKEN)
 
