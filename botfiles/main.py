@@ -23,7 +23,7 @@ bot.logger.setLevel(logging.DEBUG)
 
 
 def run_web_server():
-    webapp.run(port=8080)
+    webapp.run(port=8080, host="0.0.0.0")
 
 
 
